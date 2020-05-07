@@ -5,14 +5,7 @@ import org.scalatest.FunSuite
 
 class DriverTest extends FunSuite {
 
-  val spark =
-    SparkSession
-      .builder()
-      .appName("Spark Project")
-      .master("local[*]") // Spark runs in 'local' mode using all cores
-      .config("spark.executor.instances", "3") // 3 executors
-      .config("spark.executor.cores", "1") // 1 core each
-      .getOrCreate()
+  val spark = SparkSession.builder().appName("Project").master("local[*]").getOrCreate()
 
   test("Read approval data") {
     val approvalData = Driver.readData(spark, "data/approval-topline.csv")

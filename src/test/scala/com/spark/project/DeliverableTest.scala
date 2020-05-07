@@ -11,6 +11,8 @@ import scala.concurrent.duration._
 
 class DeliverableTest extends AnyFunSuite with Matchers with BeforeAndAfterEach {
 
+  val spark = SparkSession.builder().appName("Project").master("local[*]").getOrCreate()
+
   /**
     * Question 1: Which county in Minnesota has the most reported
     * Covid-19 cases (as of 2020-04-25)?
@@ -62,12 +64,6 @@ class DeliverableTest extends AnyFunSuite with Matchers with BeforeAndAfterEach 
     result.length must equal(1)
     result must contain(43.428729)
   }
-
-  /**
-    * Create a SparkSession that runs locally.
-    */
-  val spark =
-    SparkSession.builder().appName("Project").master("local[*]").getOrCreate()
 
   /**
     * Encoders to assist converting a csv records into Case Classes.
