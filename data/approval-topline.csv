@@ -1,4 +1,4 @@
-president,subgroup,modeldate,approve_estimate,approve_hi,approve_lo,disapprove_estimate,disapprove_hi,disapprove_lo,timestamp
+president,subgroup,model_date,approve_estimate,approve_hi,approve_lo,disapprove_estimate,disapprove_hi,disapprove_lo,timestamp
 Donald Trump,Voters,2020-05-06,43.939866,47.70647,40.173261,52.115153,55.569686,48.66062,09:36:11  6 May 2020
 Donald Trump,Adults,2020-05-06,43.562683,47.149812,39.975554,50.146828,55.456477,44.837178,09:34:39  6 May 2020
 Donald Trump,All polls,2020-05-06,43.452615,47.201176,39.704054,51.273983,55.935798,46.612168,09:33:39  6 May 2020

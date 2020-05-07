@@ -6,7 +6,7 @@ case class Approval(
     model_date: String,
     approve_estimate: Double,
     approve_hi: Double,
-    approve_loL: Double,
+    approve_lo: Double,
     disapprove_estimate: Double,
     disapprove_hi: Double,
     disapprove_lo: Double,

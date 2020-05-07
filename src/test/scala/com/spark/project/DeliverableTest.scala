@@ -1,10 +1,13 @@
 package com.spark.project
 
 import com.spark.project.dto.{Approval, Us, UsCounties, UsStates}
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Encoder, Encoders, SparkSession}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.must.Matchers
+
+import scala.concurrent.duration._
 
 class DeliverableTest extends AnyFunSuite with Matchers with BeforeAndAfterEach {
 
@@ -13,7 +16,9 @@ class DeliverableTest extends AnyFunSuite with Matchers with BeforeAndAfterEach 
     * Covid-19 cases (as of 2020-04-25)?
     */
   test("Question 1") {
-    Deliverable.question1(usCountiesRdd) must equal("Hennepin")
+    val result = Deliverable.question1(usCountiesRdd)
+    result.length must equal(1)
+    result must contain("Hennepin")
   }
 
   /**
@@ -21,7 +26,9 @@ class DeliverableTest extends AnyFunSuite with Matchers with BeforeAndAfterEach 
     * a Covid-19 death?
     */
   test("Question 2") {
-    Deliverable.question2(usCountiesRdd) must equal("Ramsey")
+    val result = Deliverable.question2(usCountiesRdd)
+    result.county must equal("Ramsey")
+    result.date must equal("2020-03-21 00:00:00")
   }
 
   /**
@@ -29,7 +36,9 @@ class DeliverableTest extends AnyFunSuite with Matchers with BeforeAndAfterEach 
     * (as of 2020-04-25), which county has the most Covid-19 cases?
     */
   test("Question 3") {
-    Deliverable.question3(usCountiesRdd, usStatesRdd) must equal("New York City")
+    val result = Deliverable.question3(usCountiesRdd, usStatesRdd)
+    result.length must equal(1)
+    result must contain("New York City")
   }
 
   /**
@@ -37,7 +46,10 @@ class DeliverableTest extends AnyFunSuite with Matchers with BeforeAndAfterEach 
     * directly before the US reported its first Covid-19 death (on 2020-02-29)?
     */
   test("Question 4") {
-    Deliverable.question4(approvalRdd, usRdd) must equal(43.452523)
+    val result = Deliverable.question4(approvalRdd, usRdd)
+    result.length must equal(1)
+    result must contain(43.452523)
+
   }
 
   /**
@@ -46,14 +58,16 @@ class DeliverableTest extends AnyFunSuite with Matchers with BeforeAndAfterEach 
     * deaths (as of 2020-04-25)?
     */
   test("Question 5") {
-    Deliverable.question5(approvalRdd, usRdd) must equal(43.428729)
+    val result = Deliverable.question5(approvalRdd, usRdd)
+    result.length must equal(1)
+    result must contain(43.428729)
   }
 
   /**
     * Create a SparkSession that runs locally.
     */
   val spark =
-    SparkSession.builder().appName("Project App").master("local[*]").getOrCreate()
+    SparkSession.builder().appName("Project").master("local[*]").getOrCreate()
 
   /**
     * Encoders to assist converting a csv records into Case Classes.
@@ -69,11 +83,29 @@ class DeliverableTest extends AnyFunSuite with Matchers with BeforeAndAfterEach 
   val csvReadOptions = Map("inferSchema" -> true.toString, "header" -> true.toString)
 
   /**
-    * Create Spark collections
+    * Create Spark collections.
     */
-  def approvalRdd = spark.read.options(csvReadOptions).csv("data/approval-topline.csv").as[Approval].rdd
-  def usRdd = spark.read.options(csvReadOptions).csv("data/us.csv").as[Us].rdd
-  def usStatesRdd = spark.read.options(csvReadOptions).csv("data/us-states.csv").as[UsStates].rdd
-  def usCountiesRdd = spark.read.options(csvReadOptions).csv("data/us-counties.csv").as[UsCounties].rdd
+  def approvalRdd: RDD[Approval] = spark.read.options(csvReadOptions).csv("data/approval-topline.csv").as[Approval].rdd
+  def usRdd: RDD[Us] = spark.read.options(csvReadOptions).csv("data/us.csv").as[Us].rdd
+  def usStatesRdd: RDD[UsStates] = spark.read.options(csvReadOptions).csv("data/us-states.csv").as[UsStates].rdd
+  def usCountiesRdd: RDD[UsCounties] = spark.read.options(csvReadOptions).csv("data/us-counties.csv").as[UsCounties].rdd
+
+  /**
+    * Set this value to 'true' to halt after execution so you can view the Spark UI at localhost:4040.
+    * NOTE: If you use this, you must terminate your test manually.
+    * OTHER NOTE: You should only use this if you run a test individually.
+    */
+  val BLOCK_ON_COMPLETION = false;
+
+  /**
+    * Keep the Spark Context running so the Spark UI can be viewed after the test has completed.
+    * This is enabled by setting `BLOCK_ON_COMPLETION = true` above.
+    */
+  override def afterEach: Unit = {
+    if (BLOCK_ON_COMPLETION) {
+      // open SparkUI at http://localhost:4040
+      Thread.sleep(5.minutes.toMillis)
+    }
+  }
 
 }

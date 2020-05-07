@@ -4,7 +4,7 @@ case class UsCounties(
     date: String,
     county: String,
     state: String,
-    fips: Int,
+    fips: String,
     cases: Int,
     deaths: Int
 )

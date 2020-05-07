@@ -16,7 +16,7 @@ class DriverTest extends FunSuite {
 
   test("Read approval data") {
     val approvalData = Driver.readData(spark, "data/approval-topline.csv")
-    assert(approvalData.count() === 3567)
+    assert(approvalData.count() === 3600)
   }
 
   test("Read us data") {
